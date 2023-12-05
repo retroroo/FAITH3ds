@@ -3,7 +3,9 @@
 
 
 # I want to playtest!
-See releases tab
+See releases tab for .cci emulation files.
+
+If you want to playtest on 3ds hardware, you can compile a .cci to a .cia with godmode9 on your own 3ds. I dont have a 3ds so I am unable to at this moment.
 
 
 
