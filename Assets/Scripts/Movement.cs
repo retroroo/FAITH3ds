@@ -10,6 +10,7 @@ public class Movement : MonoBehaviour
 
     public bool inputMove = false;
     public bool use3DSControls = false;
+    public bool movementLocked = false; // New bool for movement lock
 
     private KeyCode upKey;
     private KeyCode downKey;
@@ -45,13 +46,26 @@ public class Movement : MonoBehaviour
         }
 
         isMoving();
+        if (Input.GetKey(startKey))
+        {
+            animator.SetBool("Cross", true);
+            movementLocked = true; // Lock movement when "Cross" is set to true
+        }
+        else
+        {
+            animator.SetBool("Cross", false);
+            movementLocked = false; // Unlock movement when "Cross" is false
+        }
     }
 
     private void FixedUpdate()
     {
-        // Move the player based on the input vector
-        Vector2 movement = inputVector * moveSpeed * Time.fixedDeltaTime;
-        transform.Translate(movement);
+        if (!movementLocked) // Check if movement is not locked
+        {
+            // Move the player based on the input vector
+            Vector2 movement = inputVector * moveSpeed * Time.fixedDeltaTime;
+            transform.Translate(movement);
+        }
     }
 
     private void UpdateControlScheme()
