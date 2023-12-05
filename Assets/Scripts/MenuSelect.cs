@@ -15,6 +15,8 @@ public class MenuSelect : MonoBehaviour
     public int maxNumber = 10;
     public int currentNumber = 0;
 
+    private bool moving;
+
 	public GameObject warning;
 
     void Update()
@@ -22,13 +24,13 @@ public class MenuSelect : MonoBehaviour
         // Check for input and update currentNumber
         if (use3DSControls)
         {
-            if (UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Up)) currentNumber--;
-            if (UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Down)) currentNumber++;
+            if (UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Up)) StartCoroutine(moveThing(1, 0.3f));
+            if (UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Down)) StartCoroutine(moveThing(0, 0.3f));
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.W)) currentNumber--;
-            if (Input.GetKeyDown(KeyCode.S)) currentNumber++;
+            if (Input.GetKeyDown(KeyCode.W)) StartCoroutine(moveThing(1, 0.3f));
+            if (Input.GetKeyDown(KeyCode.S)) StartCoroutine(moveThing(0, 0.3f));
         }
 
         // Cap the number
@@ -74,7 +76,21 @@ public class MenuSelect : MonoBehaviour
 				StartCoroutine(ActivateAndDeactivate(warning, 3));
 			}
 	}
-	 private IEnumerator ActivateAndDeactivate(GameObject obj, float seconds)
+	 private IEnumerator moveThing(int upordown, float seconds)
+    {
+        if(upordown == 0 && moving == false){
+            currentNumber += 1;
+            moving = true;
+            yield return new WaitForSeconds(seconds);
+            moving = false;
+        }else if (moving == false){
+            currentNumber -=1;
+            moving = true;
+            yield return new WaitForSeconds(seconds);
+            moving = false;
+        }
+    }
+     private IEnumerator ActivateAndDeactivate(GameObject obj, float seconds)
     {
         if (obj != null)
         {
