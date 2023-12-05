@@ -15,3 +15,7 @@ https://odysee.com/unity3ds:8
 
 
 After this, it is the same as normal unity. Please work within the 3ds constraints. For this specific project I want to try my best to keep it compatible with o3ds.
+
+
+# That seems hard, how else can I help?
+I refuse to accept donations until the game is released, until then please bug me to finish it. Im known for procrastinating, and knowing a game is wanted motivates me.
