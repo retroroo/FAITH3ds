@@ -7,10 +7,13 @@ public class Movement : MonoBehaviour
     public float moveSpeed = 5f;
     private Vector2 inputVector;
     private Animator animator;
+	private Rigidbody2D rb;
 
     public bool inputMove = false;
     public bool use3DSControls = false;
     public bool movementLocked = false; // New bool for movement lock
+
+    public LayerMask collisionLayer;
 
     private KeyCode upKey;
     private KeyCode downKey;
@@ -20,17 +23,39 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+       animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>(); // Make sure Rigidbody2D is attached
         UpdateControlScheme();
+    }
+
+    void Start()
+    {
+        if (use3DSControls)
+        {
+            UnityEngine.N3DS.Keyboard.SetType(N3dsKeyboardType.Qwerty);
+        }
     }
 
     private void Update()
     {
-        // Check for key presses based on the control scheme
-        bool upPressed = Input.GetKey(upKey);
-        bool downPressed = Input.GetKey(downKey);
-        bool leftPressed = Input.GetKey(leftKey);
-        bool rightPressed = Input.GetKey(rightKey);
+        bool upPressed, downPressed, leftPressed, rightPressed;
+
+        if (!use3DSControls)
+        {
+            // Standard controls
+            upPressed = Input.GetKey(upKey);
+            downPressed = Input.GetKey(downKey);
+            leftPressed = Input.GetKey(leftKey);
+            rightPressed = Input.GetKey(rightKey);
+        }
+        else
+        {
+            // 3DS controls
+            upPressed = UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Up);
+            downPressed = UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Down);
+            leftPressed = UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Left);
+            rightPressed = UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Right);
+        }
 
         // Calculate movement vector based on key presses
         float horizontalInput = (rightPressed ? 1f : 0f) - (leftPressed ? 1f : 0f);
@@ -46,7 +71,11 @@ public class Movement : MonoBehaviour
         }
 
         isMoving();
-        if (Input.GetKey(startKey))
+
+        bool startPressed = use3DSControls ? 
+            UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.A) : Input.GetKey(startKey);
+
+        if (startPressed)
         {
             animator.SetBool("Cross", true);
             movementLocked = true; // Lock movement when "Cross" is set to true
@@ -58,14 +87,31 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+        private void FixedUpdate()
     {
-        if (!movementLocked) // Check if movement is not locked
+        if (!movementLocked)
         {
-            // Move the player based on the input vector
             Vector2 movement = inputVector * moveSpeed * Time.fixedDeltaTime;
-            transform.Translate(movement);
+            MoveCharacter(movement);
         }
+    }
+
+    private void MoveCharacter(Vector2 movement)
+    {
+        Vector2 newPosition = rb.position + movement;
+        if (!IsColliding(newPosition))
+        {
+            rb.MovePosition(newPosition);
+        }
+    }
+
+    private bool IsColliding(Vector2 targetPosition)
+    {
+        // Assuming your character's collider is a BoxCollider2D
+        BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+
+        Collider2D hit = Physics2D.OverlapBox(targetPosition, boxCollider.size, 0, collisionLayer);
+        return hit != null;
     }
 
     private void UpdateControlScheme()
@@ -80,17 +126,25 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            upKey = KeyCode.UpArrow;
-            downKey = KeyCode.DownArrow;
-            leftKey = KeyCode.LeftArrow;
-            rightKey = KeyCode.RightArrow;
-            startKey = KeyCode.Return;
+            // For 3DS controls, keys will be handled in the Update method
+            upKey = downKey = leftKey = rightKey = startKey = KeyCode.None;
         }
     }
 
     private bool AreAnyKeysPressed()
     {
-        return Input.GetKey(upKey) || Input.GetKey(downKey) || Input.GetKey(leftKey) || Input.GetKey(rightKey);
+        if (!use3DSControls)
+        {
+            return Input.GetKey(upKey) || Input.GetKey(downKey) || Input.GetKey(leftKey) || Input.GetKey(rightKey);
+        }
+        else
+        {
+            // Check for 3DS button holds
+            return UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Up) ||
+                   UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Down) ||
+                   UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Left) ||
+                   UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.Right);
+        }
     }
 
     private void UpdateAnimationDirection()
@@ -106,6 +160,7 @@ public class Movement : MonoBehaviour
         int animationDirection = Mathf.RoundToInt(angle / 45.0f);
         animator.SetInteger("Direction", animationDirection);
     }
+
 
     private void isMoving()
     {
