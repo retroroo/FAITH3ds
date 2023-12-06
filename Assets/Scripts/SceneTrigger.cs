@@ -9,7 +9,10 @@ public class SceneTrigger : MonoBehaviour {
 
 
 	private void OnTriggerEnter2D(Collider2D other) {
-		LoadScene();
+        if (other.CompareTag("Player") && !other.isTrigger)
+        {
+		    LoadScene();
+        }
 	}
 
     // This method can be called to load the scene

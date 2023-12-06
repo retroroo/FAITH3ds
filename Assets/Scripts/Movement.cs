@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Movement : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class Movement : MonoBehaviour
     private KeyCode leftKey;
     private KeyCode rightKey;
     private KeyCode startKey;
+
+    public UnityEvent onTriggerEvent;
 
     private void Awake()
     {
@@ -180,5 +183,20 @@ public class Movement : MonoBehaviour
 
         // Update the Animator parameter with the isMoving value.
         animator.SetBool("IsMoving", inputMove);
+    }
+  void OnTriggerEnter2D(Collider2D other)
+    {
+        bool startPressed = use3DSControls ? 
+            UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.A) : Input.GetKey(startKey);
+        Possessed script = other.gameObject.GetComponent<Possessed>();
+        if (script != null && startPressed)
+        {
+            script.Collided();
+        }
+
+        if (onTriggerEvent != null)
+        {
+            onTriggerEvent.Invoke();
+        }
     }
 }
