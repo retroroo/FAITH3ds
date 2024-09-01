@@ -1,3 +1,7 @@
+# NOTICE
+WORK ON THIS WILL BE DELAYED TO FAVOR FAITHGBA. IF THIS HAS ENOUGH SUPPORT I WILL RESUME DEVELOPMENT.
+
+
 # Faith3ds
  Faith recreation in unity 5.6 for 3ds homebrew
 
@@ -15,9 +19,13 @@ Follow one of the 3D Unity tutorials available. Once downloaded, simply clone th
 
 https://odysee.com/unity3ds:8
 
+DIMOBLADE has good tutorials on youtube as well. He is very helpful on his discord.
+
 
 After this, it is the same as normal unity. Please work within the 3ds constraints. For this specific project I want to try my best to keep it compatible with o3ds.
 
 
 # That seems hard, how else can I help?
-I refuse to accept donations until the game is released, until then please bug me to finish it. Im known for procrastinating, and knowing a game is wanted motivates me.
+There are support links in my profile. Im known for procrastinating, and knowing a game is wanted motivates me. Sharing this project on social media would also help.
+
+Many thanks
